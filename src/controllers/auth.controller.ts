@@ -12,12 +12,29 @@ export class AuthController {
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: 'Registration error', errors: errors.array() })
       }
-      const { email, password, nickname } = req.body
+      const password = req.body.password
+      const email = req.body.email.trim().toLowerCase()
+      const nickname = req.body.nickname.trim().toLowerCase()
       const hashPassword = bcrypt.hashSync(password, 7)
       const user = await User.create({ nickname, email, password: hashPassword })
-      res.json({ ...user.dataValues, token: jwtService.create(user.id) })
+      res.json({ ...user.dataValues, token: jwtService.create(user.id), password: undefined })
     } catch (error) {
-      res.status(400).json({ message: 'Registration error', error })
+      res.status(500).json({ message: 'Registration error', error })
+    }
+  }
+
+  login = async (req: Request, res: Response) => {
+    try {
+      const email = req.body.email.trim().toLowerCase()
+      const password = req.body.password.trim()
+      const user = await User.findOne({ where: { email } })
+      if (!user) return res.status(404).json({ message: 'No user with this email was found' })
+      const passwordIsValid = bcrypt.compareSync(password, user.password)
+      if (!passwordIsValid) return res.status(401).json({ message: 'The password is invalid' })
+      res.json({ ...user.dataValues, token: jwtService.create(user.id), password: undefined })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Registration error', error })
     }
   }
 }
