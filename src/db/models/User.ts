@@ -8,7 +8,7 @@ export class User extends Model {
     autoIncrement: true,
     primaryKey: true,
     allowNull: false,
-    unique: true,
+    unique: true
   })
   id!: number
 
