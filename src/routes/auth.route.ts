@@ -16,3 +16,4 @@ const registerMiddlewares = [
 
 authRouter.post('/register', registerMiddlewares, controller.register)
 authRouter.post('/login', controller.login)
+authRouter.post('/autologin', controller.autoLogin)

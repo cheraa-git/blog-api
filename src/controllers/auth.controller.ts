@@ -33,8 +33,19 @@ export class AuthController {
       if (!passwordIsValid) return res.status(401).json({ message: 'The password is invalid' })
       res.json({ ...user.dataValues, token: jwtService.create(user.id), password: undefined })
     } catch (error) {
-      console.log(error)
-      res.status(500).json({ message: 'Registration error', error })
+      res.status(500).json({ message: 'Authorization error', error })
+    }
+  }
+
+  autoLogin = async ({ body: { token } }: Request, res: Response) => {
+    try {
+      const userId = jwtService.verify(token)
+      if (!userId) return res.status(401).json({ message: 'invalid token' })
+      const user = await User.findOne({ where: { id: userId } })
+      if (!user) return res.status(401).json({ message: 'invalid token' })
+      res.json({ ...user.dataValues, token, password: undefined })
+    } catch (error) {
+      res.status(500).json({ message: 'Authorization error', error })
     }
   }
 }
