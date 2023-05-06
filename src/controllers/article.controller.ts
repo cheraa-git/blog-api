@@ -24,12 +24,23 @@ export class ArticleController {
 
   remove = async (req: Request, res: Response) => {
     const id = +req.params.id
-    if (!id) return res.status(400).json({ message: 'Invalid request' })
     try {
       const removedRows = await Article.destroy({ where: { id } })
+
       res.json({ removedRows })
     } catch (error) {
       res.status(400).json({ message: 'Removing article error', error })
+    }
+  }
+
+  get = async (req: Request, res: Response) => {
+    const id = +req.params.id
+    try {
+      const article = await Article.findOne({ where: { id } })
+      if (!article) return res.status(404).json({ message: 'Article not found' })
+      res.json({ ...article.dataValues })
+    } catch (error) {
+      res.status(500).json({ message: 'Getting article error', error })
     }
   }
 }
