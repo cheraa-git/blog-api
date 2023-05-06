@@ -5,3 +5,4 @@ const controller = new ArticleController()
 export const articleRouter = Router()
 
 articleRouter.post('/', controller.create)
+articleRouter.put('/', controller.update)
