@@ -17,9 +17,6 @@ export class Article extends Model {
   userId!: number
 
   @Column({ type: DataType.STRING, allowNull: false })
-  createdAt!: string
-
-  @Column({ type: DataType.STRING, allowNull: false })
   title!: string
 
   @Column({ type: DataType.STRING })
