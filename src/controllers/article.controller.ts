@@ -18,7 +18,18 @@ export class ArticleController {
       const article = await Article.update({ title, content, imageUrl }, { where: { id, userId }, returning: ['*'] })
       res.json({ ...article[1][0].dataValues })
     } catch (error) {
-      res.status(500).json({ message: 'Updating article error', error })
+      res.status(400).json({ message: 'Updating article error', error })
+    }
+  }
+
+  remove = async (req: Request, res: Response) => {
+    const id = +req.params.id
+    if (!id) return res.status(400).json({ message: 'Invalid request' })
+    try {
+      const removedRows = await Article.destroy({ where: { id } })
+      res.json({ removedRows })
+    } catch (error) {
+      res.status(400).json({ message: 'Removing article error', error })
     }
   }
 }

@@ -6,3 +6,4 @@ export const articleRouter = Router()
 
 articleRouter.post('/', controller.create)
 articleRouter.put('/', controller.update)
+articleRouter.delete('/:id', controller.remove)
