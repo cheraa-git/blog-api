@@ -19,8 +19,7 @@ connection.sync()
   .catch((err) => console.log('DATABASE_ERROR', err))
 
 app.get('/', (req: Request, res: Response) => {
-  console.log('GET', new Date().toLocaleTimeString())
-  res.send('Server is working...')
+  res.redirect('https://github.com/cheraa-git/blog-api')
 })
 
 app.listen(PORT, () => {
