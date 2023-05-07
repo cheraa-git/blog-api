@@ -1,6 +1,19 @@
 # Blog API
 
+Server url: `https://blog-api-qsno.onrender.com`
+
 # Documentation
+
+* [Authorization endpoints](#Authorization-endpoints)
+    * [Registration](#post-authregister)
+    * [Login](#post-authlogin)
+    * [Login by token](#post-authautologin)
+* [Articles endpoints](#articles-endpoints)
+    * [Get page](#get-articlepage0pagesize20)
+    * [Get one article](#get-articleid)
+    * [Create article](#post-article)
+    * [Update article](#put-article)
+    * [Delete article](#delete-articleid)
 
 **Base url: `https://blog-api-qsno.onrender.com/api/v1`**
 
@@ -71,7 +84,7 @@ Examples responses:
 
 ### POST `/auth/autologin`
 
-Automatically log in a user using an access token.
+Automatically log in a user using a token.
 
 Request body:
 
