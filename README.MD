@@ -173,7 +173,7 @@ Authorization header (`Bearer [token]`) is required
 
 **Request body**
 
-- title (string)
+- title (required, string)
 - content (string)
 - imageUrl (string)
 

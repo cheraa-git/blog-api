@@ -8,8 +8,8 @@ const email = async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findOne({ where: { email } })
     if (user) return sendError.auth(res, 'Email already exists')
     next()
-  } catch (error) {
-    sendError.server(res, '', error)
+  } catch (error: any) {
+    sendError.server(res, error?.message, error)
   }
 }
 
@@ -19,8 +19,8 @@ const nickname = async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findOne({ where: { nickname } })
     if (user) return sendError.auth(res, 'Nickname already exists')
     next()
-  } catch (error) {
-    sendError.server(res, '', error)
+  } catch (error: any) {
+    sendError.server(res, error?.message, error)
   }
 }
 

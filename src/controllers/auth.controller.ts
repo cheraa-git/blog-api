@@ -13,8 +13,8 @@ export class AuthController {
       const hashPassword = bcrypt.hashSync(req.body.password, 7)
       const user = await User.create({ nickname, email, password: hashPassword })
       res.json({ ...user.dataValues, token: jwtService.create(user.id), password: undefined })
-    } catch (error) {
-      sendError.server(res, 'Registration error', error)
+    } catch (error: any) {
+      sendError.server(res, error?.message, error)
     }
   }
 
@@ -23,12 +23,12 @@ export class AuthController {
       const email = req.body.email.trim().toLowerCase()
       const password = req.body.password.trim()
       const user = await User.findOne({ where: { email } })
-      if (!user) return sendError.auth(res, 'No user with this email was found')
+      if (!user) return sendError.auth(res, 'The email is invalid')
       const passwordIsValid = bcrypt.compareSync(password, user.password)
       if (!passwordIsValid) return sendError.auth(res, 'The password is invalid')
       res.json({ ...user.dataValues, token: jwtService.create(user.id), password: undefined })
-    } catch (error) {
-      sendError.server(res, 'Login error', error)
+    } catch (error: any) {
+      sendError.server(res, error?.message, error)
     }
   }
 
@@ -39,8 +39,8 @@ export class AuthController {
       const user = await User.findOne({ where: { id: userId } })
       if (!user) return sendError.auth(res, 'Invalid token')
       res.json({ ...user.dataValues, token, password: undefined })
-    } catch (error) {
-      sendError.server(res, 'Auto login error', error)
+    } catch (error: any) {
+      sendError.server(res, error?.message, error)
     }
   }
 }

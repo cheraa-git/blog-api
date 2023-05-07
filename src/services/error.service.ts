@@ -19,7 +19,7 @@ export const sendError = {
     return payload
   },
   unauthorized: (res: Response, message?: string): ErrorPayload => {
-    const payload = { name: 'NotFoundError', message }
+    const payload = { name: 'Unauthorized', message }
     res.status(401).json(payload)
     return payload
   },

@@ -8,7 +8,7 @@ export const authRouter = Router()
 
 authRouter.post(
   '/register',
-  [checkDuplicate.email, checkDuplicate.nickname, requiredMiddleware(['email', 'nickname', 'password'])],
+  [requiredMiddleware(['email', 'nickname', 'password']), checkDuplicate.email, checkDuplicate.nickname],
   controller.register
 )
 authRouter.post('/login', [requiredMiddleware(['email', 'password'])], controller.login)

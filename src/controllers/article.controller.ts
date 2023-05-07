@@ -8,50 +8,60 @@ export class ArticleController {
     try {
       const article = await Article.create({ userId, title, content, imageUrl })
       res.json({ ...article.dataValues })
-    } catch (error) {
-      sendError.server(res, 'Article creation error', error)
+    } catch (error: any) {
+      sendError.server(res, error?.message, error)
     }
   }
   update = async (req: Request, res: Response) => {
     const { id, userId, title, content, imageUrl } = req.body
+    if (!title && !content && !imageUrl) return sendError.badRequest(res, 'Enter the article details')
     try {
-      const article = await Article.update({ title, content, imageUrl }, { where: { id, userId }, returning: ['*'] })
-      res.json({ ...article[1][0].dataValues })
-    } catch (error) {
-      sendError.server(res, 'Article updating error', error)
+      const [count, rows] = await Article.update({ title, content, imageUrl }, {
+        where: { id, userId }, returning: ['*']
+      })
+      if (count === 0) return sendError.notFound(res, 'Article not found')
+      res.json({ ...rows?.[0]?.dataValues })
+    } catch (error: any) {
+      sendError.server(res, error?.message, error)
     }
   }
 
   remove = async (req: Request, res: Response) => {
     const id = +req.params.id
     const userId = +req.body.userId
+    if (!id) return sendError.badRequest(res, 'Invalid ID')
     try {
       const removedRows = await Article.destroy({ where: { id, userId } })
-      res.json({ removedRows, userId })
-    } catch (error) {
-      sendError.server(res, 'Article removing error', error)
+      if (removedRows === 0) return sendError.notFound(res, 'Article not found')
+      res.json({ id })
+    } catch (error: any) {
+      sendError.server(res, error?.message, error)
     }
   }
 
   get = async (req: Request, res: Response) => {
     const id = +req.params.id
+    if (!id) return sendError.badRequest(res, 'Invalid ID')
     try {
       const article = await Article.findOne({ where: { id } })
       if (!article) return sendError.notFound(res, 'Article not found')
       res.json({ ...article.dataValues })
-    } catch (error) {
-      sendError.server(res, 'Article getting error', error)
+    } catch (error: any) {
+      sendError.server(res, error?.message, error)
     }
   }
 
   getRange = async (req: Request, res: Response) => {
-    const page = Number(req.query.page) || 0
-    const pageSize = Number(req.query.pageSize) || 20
+    const page = Number(req.query.page) >= 0 ? Number(req.query.page) : 0
+    let pageSize = Number(req.query.pageSize) >= 0 ? Number(req.query.pageSize) : 20
+    if (pageSize > 100) {
+      pageSize = 100
+    }
     try {
-      const articles = await Article.findAll({ offset: page * pageSize, limit: page * pageSize + pageSize })
-      res.json(articles)
-    } catch (error) {
-      sendError.server(res, 'Articles getting error', error)
+      const response = await Article.findAndCountAll({ offset: page * pageSize, limit: pageSize })
+      res.json({ articles: response.rows, countAll: response.count })
+    } catch (error: any) {
+      sendError.server(res, error?.message, error)
     }
   }
 }
