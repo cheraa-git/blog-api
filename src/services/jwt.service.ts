@@ -13,8 +13,13 @@ export const jwtService = {
   create: (userId: number): string => {
     return jwt.sign({ userId }, JWT_SECRET)
   },
-  verify: (token: string): number | undefined => {
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
-    return payload?.userId
+  verify: (token?: string): number | null => {
+    if (!token) return null
+    try {
+      const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
+      return payload?.userId
+    } catch (error) {
+      return null
+    }
   }
 }
