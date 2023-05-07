@@ -1,4 +1,5 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript'
+import { Article } from './Article'
 
 
 @Table({ timestamps: false, tableName: 'user' })
@@ -28,4 +29,7 @@ export class User extends Model {
 
   @Column({ type: DataType.STRING })
   password!: string
+
+  @HasMany(() => Article, { onDelete: 'cascade' })
+  articles!: Article[]
 }

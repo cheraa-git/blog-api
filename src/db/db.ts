@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize-typescript'
 import { User } from './models/User'
+import { Article } from './models/Article'
 
 const connection = new Sequelize({
   dialect: 'postgres',
@@ -8,7 +9,7 @@ const connection = new Sequelize({
   password: process.env.PGPASSWORD,
   database: process.env.PGDATABASE,
   logging: false,
-  models: [User],
+  models: [User, Article],
   pool: {
     max: 5,
     min: 0,
