@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import * as bcrypt from 'bcrypt'
 import { User } from '../db/models/User'
 import { jwtService } from '../services/jwt.service'
+import { sendError } from '../services/error.service'
 
 
 export class AuthController {
@@ -13,7 +14,7 @@ export class AuthController {
       const user = await User.create({ nickname, email, password: hashPassword })
       res.json({ ...user.dataValues, token: jwtService.create(user.id), password: undefined })
     } catch (error) {
-      res.status(500).json({ message: 'Registration error', error })
+      sendError.server(res, 'Registration error', error)
     }
   }
 
@@ -22,24 +23,24 @@ export class AuthController {
       const email = req.body.email.trim().toLowerCase()
       const password = req.body.password.trim()
       const user = await User.findOne({ where: { email } })
-      if (!user) return res.status(404).json({ message: 'No user with this email was found' })
+      if (!user) return sendError.auth(res, 'No user with this email was found')
       const passwordIsValid = bcrypt.compareSync(password, user.password)
-      if (!passwordIsValid) return res.status(401).json({ message: 'The password is invalid' })
+      if (!passwordIsValid) return sendError.auth(res, 'The password is invalid')
       res.json({ ...user.dataValues, token: jwtService.create(user.id), password: undefined })
     } catch (error) {
-      res.status(500).json({ message: 'Authorization error', error })
+      sendError.server(res, 'Login error', error)
     }
   }
 
   autoLogin = async ({ body: { token } }: Request, res: Response) => {
     try {
       const userId = jwtService.verify(token)
-      if (!userId) return res.status(401).json({ message: 'invalid token' })
+      if (!userId) return sendError.auth(res, 'Invalid token')
       const user = await User.findOne({ where: { id: userId } })
-      if (!user) return res.status(401).json({ message: 'invalid token' })
+      if (!user) return sendError.auth(res, 'Invalid token')
       res.json({ ...user.dataValues, token, password: undefined })
     } catch (error) {
-      res.status(500).json({ message: 'Authorization error', error })
+      sendError.server(res, 'Auto login error', error)
     }
   }
 }

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { sendError } from '../services/error.service'
 
 export const requiredMiddleware = (fields: string[]) => (req: Request, res: Response, next: NextFunction) => {
   const emptyFields: string[] = []
@@ -6,7 +7,7 @@ export const requiredMiddleware = (fields: string[]) => (req: Request, res: Resp
     if (req.body[field] === undefined) emptyFields.push(field)
   })
   if (emptyFields.length > 0) {
-    return res.status(400).json({ message: `Field(s): ${emptyFields.join(', ')} is(are) required` })
+    return sendError.badRequest(res, `Field(s): ${emptyFields.join(', ')} is(are) required`)
   }
   next()
 }
