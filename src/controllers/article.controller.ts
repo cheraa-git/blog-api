@@ -43,4 +43,15 @@ export class ArticleController {
       res.status(500).json({ message: 'Getting article error', error })
     }
   }
+
+  getRange = async (req: Request, res: Response) => {
+    const page = Number(req.query.page) || 0
+    const pageSize = Number(req.query.pageSize) || 20
+    try {
+      const articles = await Article.findAll({ offset: page * pageSize, limit: page * pageSize + pageSize })
+      res.json(articles)
+    } catch (error) {
+      res.status(500).json({ message: 'Getting articles error', error })
+    }
+  }
 }
